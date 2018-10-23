@@ -1,75 +1,71 @@
-//Create variable of computer guess
-var computerChoices = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+var letters = ["a", "b", "c","d", "f", "g",
+                "h", "j", "k","l", "q", "w",
+                "e", "r", "t","y", "u", "i",
+                "n", "v", "m","x", "z", "o",
+                ];
 
-//Create variables to track numbers of wins, losses, and guesses left!All are setting to zero
-var wins = 0;
-var losses = 0;
-var guessesLeft = 9;
+//Creating an array that holds user's guesses
 var guessedLetters = [];
 
+//Creating variable with letter that user's guess has to match
+var letterToGuess = null;
 
-//All Functions here
+//Counting down user' guesses
+var guessesLeft = 9;
 
-    //Function for computer to randomly select a letter
+//Counting for wins and losses
+var wins = 0;
+var losses = 0;
 
-    var computerGuess = computerChoices[Math.floor(Math.random() * computerChoices.length)];
+//Functions for updateguesses, updateGuessesLeft, and updateGuessesSoFar
+var updateGuessesLeft = function () {
+    document.querySelector("#guesses-left").innerHTML = guessesLeft;
+};
 
-    //Create an update for guesses left
-    var updateGuessesLeft = function () {
-        document.querySelector("#guessesLeft").innerHTML = "Guesses Left: " + guessesLeft;
-    };
+var updateLetterToGuess = function () {
+    letterToGuess = letters[Math.floor(Math.random() * letters.length)];
+};
 
-    //Create an update for gussed letters
-    var updateGuessedLetters = function () {
-        document.querySelector("#yourGuesses").innerHTML = "Your Guesses so far: " + guessedLetters;
-    };
-    
+var updateGuessesSoFar = function () {
+    document.querySelector("#guesses-so-far").innerHTML = guessedLetters.join(", ");
+};
 
-    
-
-    // Function to reset everything
-    var reset = function() {
-        guessesLeft = 9;
-        guessedLetters = [];
-        updateGuessesLeft();
-        updateGuessedLetters();
-        
-    };
-
-    computerGuess;
+//Function that will be called when resetting everything
+var reset = function () {
+    guessesLeft = 9;
+    guessedLetters = [];
+    updateLetterToGuess();
     updateGuessesLeft();
+    updateGuessesSoFar();
+};
 
-    //This function runs when users press a letter
-    document.onkeyup = function(event) {
+//Executing on page load
+updateLetterToGuess();
+updateGuessesLeft();
 
-        //Guesses left that users have
-        guessesLeft--;
+//Function that captures the keyboard clicks
+document.onkeydown = function (event) {
+    //reducing guesses by one
+    guessesLeft--;
+    //Lowercase the letter
+    var letter = String.fromCharCode(event.which).toLowerCase();
+    // adding the guess to the guessesLetter array
+    guessedLetters.push(letter);
+    //Running the update functions
+    updateGuessesLeft();
+    updateGuessesSoFar();
 
-        //Validate a letter that users pressed
-        var userGuess = String.fromCharCode(event.keyCode).toLowerCase();
+    //Checking if matching
+    if (letter == letterToGuess) {
+        wins++;
+        document.querySelector("#wins").innerHTML = wins;
+        reset();
+    }
+    //result if no match
+    if (guessesLeft === 0) {
+        losses++;
+        document.querySelector("#losses").innerHTML = losses;
+        reset();
+    }
 
-        //Update guessed Left and guesses so far letter
-        updateGuessesLeft();
-        updateGuessedLetters();
-
-
-        //Allow users 9 guesses
-        if (guessesLeft > 0){
-            
-            //Only run when user guess matches computer guess
-            if (userGuess == computerGuess) {
-                wins++;
-                document.querySelector("#win").innerHTML = "wins:" + wins;
-                alert("Congratulation! You are psychic");
-                reset();
-            }
-
-        //Only run when user guess does not match computer guess
-        else if(guessesLeft == 0) {
-                losses++;
-                document.querySelector("#losses").innerHTML =  "Losses: " + losses;
-                alert("Sorry, you are not psyhic, let try it again!");
-                reset();
-            }
-        }
-    };
+}
